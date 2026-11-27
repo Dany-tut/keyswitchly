@@ -219,15 +219,133 @@
 <footer>KeySwitchly 0.5 · Сделано на Mac</footer>
 
 <script>
-  const text = "Даты выделение не тот цвет";
+  const texts = { ru: "Даты выделение не тот цвет", en: "See you tomorrow" };
   const el = document.getElementById("typed");
   let i = 0;
   function tick() {
+    const text = texts[document.documentElement.lang === "en" ? "en" : "ru"];
     el.textContent = text.slice(0, i);
     if (i < text.length) { i++; setTimeout(tick, 70 + Math.random() * 60); }
     else setTimeout(() => { i = 0; tick(); }, 2600);
   }
+  window.addEventListener('langchange', () => { i = 0; });
   tick();
+</script>
+<script>
+/* RU/EN */
+(function () {
+  // RU/EN: language from ?lang=, then saved choice, then browser (ru/uk/be/kk → ru, else en).
+  var EN = {
+"KeySwitchly — исправляет текст, набранный не в той раскладке, со второй буквы. Для macOS.": "KeySwitchly fixes text typed in the wrong keyboard layout — from the second letter. For macOS.",
+"Возможности": "Features",
+"Установка": "Install",
+"Скачать": "Download",
+"Иконка KeySwitchly": "KeySwitchly icon",
+"Пиши.": "Just type.",
+"Остальное он поправит.": "It fixes the rest.",
+"Набрал не в той раскладке? KeySwitchly понимает это со второй буквы — и тихо исправляет.": "Typing in the wrong layout? KeySwitchly notices by the second letter and quietly fixes it. Built for people who switch between Russian and English.",
+"Скачать для Mac": "Download for Mac",
+"Подробнее": "Learn more",
+"Версия 0.5 · macOS 13 и новее · Apple Silicon и Intel · 1,7 МБ": "Version 0.5 · macOS 13 or later · Apple Silicon and Intel · 1.7 MB",
+"Пример исправления": "Correction example",
+"Набрано": "Typed",
+"Стало": "Fixed",
+"Lfnf dsltktybz yt njn wdtn": "Ыуу нщг ещьщккщц",
+"Маленькая утилита.": "A tiny utility.",
+"Много мелочей.": "Lots of little touches.",
+"Живёт в строке меню и не мешает работать.": "It lives in the menu bar and stays out of your way.",
+"lf →": "ру →",
+"да": "he",
+"ты": "llo",
+"Со второй буквы": "From the second letter",
+"Не ждёт конца слова: ошибку раскладки видно уже по 2–4 буквам.": "No waiting for the end of the word: a layout mistake shows up within 2–4 letters.",
+"Знает бренды": "Knows brand names",
+"iPhone, YouTube, Яндекс, GitHub и ещё сотня названий — тоже переключает.": "iPhone, YouTube, Yandex, GitHub and a hundred more names get switched too.",
+"Опечатки": "Typos",
+"Соседняя клавиша, лишняя или переставленная буква. Сленг и термины не трогает.": "Fixes Russian typos: a neighboring key, an extra or swapped letter. Slang and jargon are left alone.",
+"Сокращения из чатов": "Chat shorthand",
+"тг, пж, хз, мб — двусмысленные решает по контексту.": "Understands Russian chat abbreviations like тг, пж, хз, мб — ambiguous ones are resolved from context.",
+"Возвращает как было": "Undo in one key",
+"Не нужно исправление — нажми ⌫, и слово вернётся. Случайное стирание не запомнит.": "Didn’t want the fix? Press ⌫ and the word comes back. An accidental delete won’t be remembered.",
+"📖 словарь": "📖 dictionary",
+"Личный словарь": "Personal dictionary",
+"Имена, ники, свои слова — отметил, и он их больше не трогает.": "Names, nicknames, your own words — mark them once and it leaves them alone.",
+"⚡ автозапуск": "⚡ auto-start",
+"Запуск при входе": "Launch at login",
+"Включается сам при старте Mac. Один переключатель — и больше о нём не думаешь.": "Starts by itself when your Mac boots. Flip one switch and forget about it.",
+"♪ поп": "♪ pop",
+"Звук или тишина": "Sound or silence",
+"Исправлять сразу, только подсказывать звуком — или смешанный режим.": "Fix right away, just play a sound as a hint, or mix the two.",
+"⌁ офлайн": "⌁ offline",
+"Приватно": "Private",
+"Без интернета. Словари — из самой macOS. Текст никуда не уходит.": "No internet needed. Dictionaries come from macOS itself. Your text never leaves your Mac.",
+"Точно. И быстро.": "Accurate. And fast.",
+"ложных срабатываний на 40 000 частых слов": "false positives across the 40,000 most common words",
+"3 мкс": "3 µs",
+"на решение о раскладке на одну клавишу": "to decide on the layout, per keystroke",
+"263 тыс.": "263K",
+"слов в словаре — русских и английских": "words in the dictionary, Russian and English",
+"По внутренним самотестам.": "Based on internal self-tests.",
+"Установка за минуту.": "Up and running in a minute.",
+"Скачайте и распакуйте архив": "Download and unzip the archive",
+"Перетащите KeySwitchly в папку «Программы».": "Drag KeySwitchly into your Applications folder.",
+"Откройте через правый клик → «Открыть»": "Right-click it → Open",
+"Сборка пока не нотаризована, поэтому macOS спросит один раз.": "The build isn’t notarized yet, so macOS will ask once.",
+"Разрешите «Универсальный доступ»": "Allow Accessibility access",
+"Настройки → Конфиденциальность и безопасность → Универсальный доступ.": "System Settings → Privacy & Security → Accessibility.",
+"Скачать KeySwitchly": "Download KeySwitchly",
+"KeySwitchly 0.5 · Сделано на Mac": "KeySwitchly 0.5 · Made on a Mac"
+};
+  var K = 'lang', CYR = /[А-Яа-яЁё]/, ATTRS = ['alt', 'aria-label', 'title', 'placeholder', 'content'];
+  function norm(s) { return s.replace(/\s+/g, ' ').trim(); }
+  function save(l) { try { localStorage.setItem(K, l); } catch (e) {} }
+  function detect() {
+    try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ru') { save(q); return q; } } catch (e) {}
+    try { var s = localStorage.getItem(K); if (s === 'en' || s === 'ru') return s; } catch (e) {}
+    var l = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+    return /^(ru|uk|be|kk)\b/i.test(l) ? 'ru' : 'en';
+  }
+  var texts = [], attrs = [];
+  var w = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT, {
+    acceptNode: function (n) { var p = n.parentNode && n.parentNode.nodeName; return p === 'SCRIPT' || p === 'STYLE' ? 2 : 1; }
+  });
+  for (var n; (n = w.nextNode());) { var k = norm(n.nodeValue); if (k && EN.hasOwnProperty(k)) texts.push([n, n.nodeValue, k]); else if (CYR.test(k)) console.warn('i18n: no EN for', k); }
+  document.querySelectorAll('*').forEach(function (el) {
+    ATTRS.forEach(function (a) { var v = el.getAttribute(a); if (v && EN.hasOwnProperty(norm(v))) attrs.push([el, a, v, norm(v)]); });
+  });
+  var btn;
+  function apply(l) {
+    document.documentElement.lang = l;
+    texts.forEach(function (t) {
+      if (l === 'ru') { t[0].nodeValue = t[1]; return; }
+      var m = t[1].match(/^\s*/)[0], e = t[1].match(/\s*$/)[0];
+      t[0].nodeValue = m + EN[t[2]] + e;
+    });
+    attrs.forEach(function (a) { a[0].setAttribute(a[1], l === 'ru' ? a[2] : EN[a[3]]); });
+    if (btn) {
+      btn.children[0].className = l === 'ru' ? 'on' : '';
+      btn.children[1].className = l === 'en' ? 'on' : '';
+      btn.setAttribute('aria-label', l === 'ru' ? 'Switch to English' : 'Switch to Russian');
+    }
+    window.dispatchEvent(new Event('langchange'));
+    window.dispatchEvent(new Event('resize'));
+  }
+  var st = document.createElement('style');
+  st.textContent = '.lang-sw{font:inherit;font-size:12px;line-height:1;letter-spacing:.02em;background:none;border:1px solid color-mix(in srgb,currentColor 25%,transparent);' +
+    'border-radius:980px;padding:5px 9px;color:inherit;cursor:pointer;opacity:.75;display:inline-flex;gap:5px;align-items:center}' +
+    '.lang-sw:hover{opacity:1}.lang-sw span{opacity:.5}.lang-sw span.on{opacity:1;font-weight:600}';
+  document.head.appendChild(st);
+  var links = document.querySelector('nav .links');
+  if (links) {
+    btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'lang-sw';
+    btn.innerHTML = '<span>RU</span><span>EN</span>';
+    btn.onclick = function () { var l = document.documentElement.lang === 'ru' ? 'en' : 'ru'; save(l); apply(l); };
+    var cta = links.querySelector('.cta, .pill');
+    links.insertBefore(btn, cta || null);
+  }
+  apply(detect());
+})();
 </script>
 </body>
 </html>
