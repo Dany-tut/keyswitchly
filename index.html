@@ -299,11 +299,14 @@
   var K = 'lang', CYR = /[А-Яа-яЁё]/, ATTRS = ['alt', 'aria-label', 'title', 'placeholder', 'content'];
   function norm(s) { return s.replace(/\s+/g, ' ').trim(); }
   function save(l) { try { localStorage.setItem(K, l); } catch (e) {} }
+  // Локация — по часовому поясу (Россия, Беларусь, Украина, Казахстан и другие страны СНГ) → русский;
+  // иначе — по языку браузера (ru/uk/be/kk → русский), остальные → английский.
+  function inRuZone() { try { return /^(Europe\/(Moscow|Kaliningrad|Samara|Volgograd|Saratov|Ulyanovsk|Astrakhan|Kirov|Simferopol|Minsk|Kiev|Kyiv|Uzhgorod|Zaporozhye|Chisinau)|Asia\/(Yekaterinburg|Omsk|Novosibirsk|Barnaul|Tomsk|Novokuznetsk|Krasnoyarsk|Irkutsk|Chita|Yakutsk|Khandyga|Vladivostok|Ust-Nera|Magadan|Sakhalin|Srednekolymsk|Kamchatka|Anadyr|Almaty|Qostanay|Aqtobe|Aqtau|Atyrau|Oral|Qyzylorda|Bishkek|Tashkent|Samarkand|Dushanbe|Ashgabat|Yerevan|Baku)|W-SU)$/.test(Intl.DateTimeFormat().resolvedOptions().timeZone || ''); } catch (e) { return false; } }
   function detect() {
     try { var q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'ru') { save(q); return q; } } catch (e) {}
     try { var s = localStorage.getItem(K); if (s === 'en' || s === 'ru') return s; } catch (e) {}
     var l = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-    return /^(ru|uk|be|kk)\b/i.test(l) ? 'ru' : 'en';
+    return inRuZone() || /^(ru|uk|be|kk)\b/i.test(l) ? 'ru' : 'en';
   }
   var texts = [], attrs = [];
   var w = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT, {
